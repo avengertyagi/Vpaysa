@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use App\Models\User;
+use App\Helpers\Helper;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+
 
 class RegisterController extends Controller
 {
@@ -63,6 +66,9 @@ class RegisterController extends Controller
                     $user['phone'] = $request['phone'];
                     $user['balance'] = $request['balance'];
                     $user['address'] = $request['address'];
+                    $user['device_type'] = Helper::get_device();
+                    $user['device_os'] = Helper::get_os();
+                    $user['device_token'] = Str::random(100);
                     $user['created_at'];
                     $user->save();
                     //return response user data
@@ -76,14 +82,16 @@ class RegisterController extends Controller
                         $data['lastname'] = $user->lastname;
                         $data['username'] = $user->username;
                         $data['email'] = $user->email;
-                        $data['password'] = $user->password;
                         $data['phone'] = $user->phone;
                         $data['balance'] = $user->balance;
                         $data['address'] = $user->address;
                         $data['image']   = url('/') . '/public/assets/uploads/user/' . $user->image;
+                        $data['device_type'] = $user->device_type;
+                        $data['device_os'] =  $user->device_os;
+                        $data['device_token'] = $user->device_token;
                         $data['created_at'] = $user->created_at;
                         return response()->json([$data], 200);
-                    } catch (Exception) {
+                    } catch (Exception $e) {
                         return response()->json(['message' => 'ExpectationFailed'], 417);
                     }
                 }

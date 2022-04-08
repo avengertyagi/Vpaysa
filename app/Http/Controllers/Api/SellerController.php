@@ -135,41 +135,37 @@ class SellerController extends Controller
     public function myTransaction(Request $request)
     {
         $user = User::where('remember_token', $request->header('token'))->first();
-        if ($user) {
-            if ($user['status' == 0]) {
-                return response()->json(['message' => 'your account has been block.Please contact to administrator']);
-            }
-        } else {
-            $transaction_list = SellerTransaction::where('creator_id', $user->id)
-                ->orWhere('joiner_id', $user->id)->with(['user', 'invitee'])->get();
-            //dd($transaction_list);
-            try {
-                $response_data = array();
-                $response_data['message'] = 'Fetch list successfuly';
-                $response_data['responsecode'] = '200';
-                $response_data['responsestatus'] = 'Ok';
-                $response_data['id'] = $transaction_list->id;
-                $response_data['user_id'] = $transaction_list->$user;
-                $response_data['title'] = $transaction_list->title;
-                $response_data['is_project'] = $transaction_list->is_project;
-                $response_data['short_description'] = $transaction_list->short_description;
-                $response_data['specification'] = $transaction_list->specification;
-                $response_data['deal_condition'] = $transaction_list->deal_condition;
-                $response_data['amount'] = $transaction_list->amount;
-                $response_data['is_broker'] = $transaction_list->is_broker;
-                $response_data['brokrage_fee'] = $transaction_list->brokrage_fee;
-                $response_data['payment_type'] = $transaction_list->payment_type;
-                $response_data['who_pay'] = $transaction_list->who_pay;
-                $response_data['deal_link'] = $transaction_list->deal_link;
-                $response_data['deal_code'] = $transaction_list->deal_code;
-                $response_data['charge'] = $transaction_list->charge;
-                $response_data['broker_charge'] = $transaction_list->broker_charge;
-                $response_data['invoice'] = $transaction_list->invoice;
-                $response_data['created_at'] = $transaction_list->created_at;
-                return response()->json([$response_data], 200);
-            } catch (Exception) {
-                return response()->json(['message' => 'ExpectationFailed'], 417);
-            }
-        }
+        $transaction_list = SellerTransaction::where('creator_id', $user->id)
+            ->orWhere('joiner_id', $user->id)->with(['user', 'invitee'])->get();
+        //dd($transaction_list);
+        return response()->json([$transaction_list], 200);
+        // try {
+        //     $response_data = array();
+        //     $response_data['message'] = 'Fetch list successfuly';
+        //     $response_data['responsecode'] = '200';
+        //     $response_data['responsestatus'] = 'Ok';
+        //     $response_data['id'] = $transaction_list->id;
+        //     //$response_data['user_id'] = $transaction_list->$user;
+        //     $response_data['title'] = $transaction_list->title;
+        //     $response_data['is_project'] = $transaction_list->is_project;
+        //     $response_data['short_description'] = $transaction_list->short_description;
+        //     $response_data['specification'] = $transaction_list->specification;
+        //     $response_data['deal_condition'] = $transaction_list->deal_condition;
+        //     $response_data['amount'] = $transaction_list->amount;
+        //     $response_data['is_broker'] = $transaction_list->is_broker;
+        //     $response_data['brokrage_fee'] = $transaction_list->brokrage_fee;
+        //     $response_data['payment_type'] = $transaction_list->payment_type;
+        //     $response_data['who_pay'] = $transaction_list->who_pay;
+        //     $response_data['deal_link'] = $transaction_list->deal_link;
+        //     $response_data['deal_code'] = $transaction_list->deal_code;
+        //     $response_data['charge'] = $transaction_list->charge;
+        //     $response_data['broker_charge'] = $transaction_list->broker_charge;
+        //     $response_data['invoice'] = $transaction_list->invoice;
+        //     $response_data['created_at'] = $transaction_list->created_at;
+        //     dd($response_data);
+        //     return response()->json([$response_data], 200);
+        // } catch (Exception) {
+        //     return response()->json(['message' => 'ExpectationFailed'], 417);
+        // }
     }
 }

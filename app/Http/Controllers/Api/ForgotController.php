@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use App\Models\User;
+use App\Helpers\Helper;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -27,26 +28,27 @@ class ForgotController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors(), 422);
             }
-            $user = User::where('email', $request['email'])->first();
-            $token =  $user->createToken('MyApp')->accessToken;
-            if ($user) {
+            $userDetails = User::where('email', $request['email'])->first();
+            $token =  $userDetails->createToken('MyApp')->accessToken;
+            if ($userDetails) {
                 //check user active or not
-                if ($user['status'] == 0) {
+                if ($userDetails['status'] == 0) {
                     return response()->json(['message' => 'your account has been block.Please contact to administrator']);
                 }
-                $user = User::where('email', $request['email'])->count();
-                if ($user == 0) {
+                $userCount = User::where('email', $request['email'])->count();
+                if ($userCount == 0) {
                     return response()->json(['message' => 'Email does not exit']);
                 } else {
                     $random_password = Str::random(8);
                     $new_password = bcrypt($random_password);
-                    User::where('email', $request['email'])->update(['password' => $new_password]);
+                    $userUpdate = User::where('email', $request['email'])->update(['password' => $new_password]);
+                    Helper::sendmail($userDetails, $userUpdate);
                     try {
                         $data = array();
                         $data['message'] = 'Mail has been send to your mail id.' . $request['email'];
                         $data['responsecode'] = '200';
                         $data['responsestatus'] = 'Ok';
-                        $data['new_password'] =  $random_password;
+                        //$data['new_password'] =  $random_password;
                         return response()->json($data);
                     } catch (Exception) {
                         return response()->json(['message' => 'ExpectationFailed'], 417);

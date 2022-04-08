@@ -15,7 +15,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        return view('home');
     }
     public function searchseo()
     {
